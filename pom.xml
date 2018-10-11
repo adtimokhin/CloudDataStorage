@@ -74,7 +74,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>Cloud</finalName>
+        <finalName>CloudDataStorage</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -115,7 +115,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>../lib/</classpathPrefix>
-                            <mainClass>ru.timokhin.Cloud.CloudApp</mainClass>
+                            <mainClass>ru.adtimokhin.CloudDataStorage.CloudApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
