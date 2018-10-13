@@ -6,11 +6,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface FolderService {
-    @NotNull List<String> getListFolderName();
-    void getListNamesRoot();
-    void createFolder(@Nullable String folderName);
-    boolean deleteFolder(@Nullable String folderName);
-    boolean clearRoot();
-    boolean exists(@Nullable String folderName);
-
+    @NotNull List<String> getFolders(@Nullable String directoryName);
+    void printListFolders(@Nullable String directoryName);
+    void createFolder(@Nullable String folderName,@Nullable String directoryName);
+    boolean deleteFolder(@Nullable String folderName,@Nullable String directoryName);
+    boolean clearFolderDirectory(@Nullable String directoryName);
+    boolean exists(@Nullable String folderName,@Nullable String directoryName);
 }

@@ -3,12 +3,14 @@ package ru.adtimokhin.CloudDataStorage.service.local;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.adtimokhin.CloudDataStorage.api.local.FolderLocalService;
+import ru.adtimokhin.CloudDataStorage.handler.keyboard.KeyboardCommandHandler;
 import ru.adtimokhin.CloudDataStorage.system.SettingService;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +20,8 @@ public class FolderLocalServiceBean implements FolderLocalService {
     private SettingService settingService;
 
     private Exception error;
-
+    private boolean directoryIsFound =false;
+     File folder = null;
 
 
     @Override
@@ -29,67 +32,157 @@ public class FolderLocalServiceBean implements FolderLocalService {
     }
 
     @Override
-    public @NotNull List<String> getListFolderName() {
-        final File root = getRoot();
-        final String[] folders = root.list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return new File(dir,name).isDirectory();//метод пройдет по каждому элементу корневой папки и если
-                // найдет, то тогда запишет его имя в folders
-            }
-        });
-        return Arrays.asList(folders);
-    }
-
-    @Override
-    public void getListNamesRoot() {
-        List<String> names = getListFolderName();
-        if(names.size() ==0){ System.out.println("---EMPTY---"); return;}
+    public void printListFolders(@Nullable String directoryName) {
+        List<String> names = getFolders(directoryName);
+        if (names.size() == 0) {
+            System.out.println("---EMPTY---");
+            return;
+        }
         System.out.println("---");
-        for (String folderName :names) {
-            System.out.println(folderName);
+        for (String fileName : names) {
+            System.out.println(fileName);
         }
         System.out.println("---");
     }
 
     @Override
-    public void createFolder(@Nullable String folderName) {
-        final File root = getRoot();
-        if(folderName ==null|| folderName.isEmpty())return;
-        final File newFile = new File(root+"/"+folderName);
-        newFile.mkdirs();//если путь для файла не будет обнаружен, то он будет создан
-
+    public @NotNull List<String> getFolders(@Nullable String directoryName) {
+        List<String> names = new ArrayList<>();
+        if (directoryName == null || directoryName.isEmpty()) return names;
+        if (KeyboardCommandHandler.ROOT.equals(directoryName) || KeyboardCommandHandler.ROOT_SHRT.equals(directoryName)) return getFolders(getRoot());
+        else {
+            File folder = findDirectory(getRoot(), directoryName);
+            if (folder == null) return names;
+            return getFolders(folder);
+        }
     }
 
     @Override
-    public boolean deleteFolder(@Nullable String folderName) {
-        final File root = getRoot();
-        if(folderName ==null|| folderName.isEmpty())return false;
-        final File fileToDelete = new File(root,folderName);
+    public @NotNull List<String> getFolders(@Nullable File root) {
+        String[] directories = root.list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return new File(dir, name).isDirectory();
+            }
+        });
+        assert directories != null;
+        return Arrays.asList(directories);
+    }
+
+    @Override
+    public boolean exists(@Nullable String folderName, @Nullable String directoryName) {
+        if(directoryName == null|| directoryName.isEmpty())return false;
+        if (KeyboardCommandHandler.ROOT.equals(directoryName) || KeyboardCommandHandler.ROOT_SHRT.equals(directoryName))return exists(directoryName,getRoot());
+        else{
+            File folder = findDirectory(getRoot(), directoryName);
+            if(folder ==null)return false;
+            return exists(directoryName, folder);
+        }
+    }
+
+    @Override
+    public boolean exists(@Nullable String folderName, @Nullable File root) {
+        if(folderName == null|| folderName.isEmpty())return false;
+        if(root ==null)return false;
+        List<String> fileNames = getFolders(root);
+        for (String name : fileNames) {
+            if(name.equals(folderName))return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void createFolder(@Nullable String folderName, @Nullable String directoryName) {
+        if (directoryName == null || directoryName.isEmpty()) return;
+        if (folderName == null || folderName.isEmpty()) return;
+        if (KeyboardCommandHandler.ROOT.equals(directoryName) || KeyboardCommandHandler.ROOT_SHRT.equals(directoryName)) createFolder(folderName, getRoot());
+        else {
+            File folder = findDirectory(getRoot(), directoryName);
+            if (folder == null) return;
+            createFolder(folderName, folder);
+        }
+    }
+
+    @Override
+    public void createFolder(@Nullable String folderName, @Nullable File root) {
+        if(root == null)return;
+        if(folderName ==null || folderName.isEmpty())return;
+        File newFile = new File(root +"/"+folderName);
+        newFile.mkdirs();
+    }
+
+    @Override
+    public boolean deleteFolder(@Nullable String folderName, @Nullable String directoryName) {
+        if (directoryName == null || directoryName.isEmpty()) return false;
+        if (folderName == null || folderName.isEmpty()) return false;
+        if (KeyboardCommandHandler.ROOT.equals(directoryName) || KeyboardCommandHandler.ROOT_SHRT.equals(directoryName)) deleteFolder(folderName, getRoot());
+        else {
+            File folder = findDirectory(getRoot(), directoryName);
+            if (folder == null) return false;
+            return deleteFolder(folderName, folder);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteFolder(@Nullable String folderName, @Nullable File root) {
+        if(root ==null)return false;
+        if(folderName ==null || folderName.isEmpty())return false;
+        File fileToDelete = new File(root, folderName);
         return fileToDelete.delete();
     }
 
     @Override
-    public boolean clearRoot() {
-        final File root = getRoot();
-        List <String> directories = getListFolderName();
-        if(directories.size() == 0)return false;//todo: добавить в это условие файловую директорию
-        for (String directory : directories) {
-            new File(root,directory).delete();
+    public boolean clearFolderDirectory(@Nullable String directoryName) {
+        if(directoryName == null || directoryName.isEmpty())return false;
+        if (KeyboardCommandHandler.ROOT.equals(directoryName) || KeyboardCommandHandler.ROOT_SHRT.equals(directoryName))return clearFolderDirectory(getRoot());
+        else{
+            File directory = findDirectory(getRoot(), directoryName);
+            if(directory == null)return false;
+            return clearFolderDirectory(directory);
         }
-        //todo: добавить удаление файлов в FileLocalServiceBean и применить его здесь, чтобы и файлы тоже удалались.
+    }
+
+    @Override
+    public boolean clearFolderDirectory( @Nullable File root) {
+        List<String> fileNames = getFolders(root);
+        for (String name : fileNames) {
+            if(name==  null)return false;
+            File file = new File(root,name);
+            file.delete();
+        }
         return true;
     }
 
     @Override
-    public boolean exists(@Nullable String folderName) {
-        for (String name : getListFolderName()) {
-            if(name.equals(folderName))return true;
-        }return false;
+    public File findDirectory(@NotNull File root, @Nullable String directoryName) {
+        List<String>directories = getFolders(root);
+        if (directories.size() != 0) {
+            for (String directory : directories) {
+                if (!directoryIsFound)
+                    if (directory.equals(directoryName)) {
+                        directoryIsFound = true;
+                        folder = new File(root, directoryName);
+                    }
+            }
+            if(!directoryIsFound) {
+                for (String directory : directories) {
+                    findDirectory(new File(root, directory), directoryName);
+                }
+            }
+        }
+        if (root.getName().equals(getRoot().getName()) && !directoryIsFound) {
+            directoryIsFound = false;
+            return null;
+        } else if (root.getName().equals(getRoot().getName()) && directoryIsFound) {
+            directoryIsFound = false;
+            return folder;
+        }
+        return null;
     }
-
+    @Override
     @NotNull
-    private File getRoot(){return new File(settingService.getSyncFolder());}
+    public File getRoot(){return new File(settingService.getSyncFolder());}
 
 
 }

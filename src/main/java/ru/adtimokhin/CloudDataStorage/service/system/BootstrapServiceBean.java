@@ -1,5 +1,6 @@
 package ru.adtimokhin.CloudDataStorage.service.system;
 
+import lombok.SneakyThrows;
 import ru.adtimokhin.CloudDataStorage.api.annotations.Loggable;
 import ru.adtimokhin.CloudDataStorage.event.keyboard.KeyboardInitEvent;
 import ru.adtimokhin.CloudDataStorage.service.local.FolderLocalServiceBean;
@@ -24,6 +25,7 @@ public class BootstrapServiceBean {
 
 
     @Loggable
+    @SneakyThrows
     public void init() {
         settingService.init();
         appService.init();

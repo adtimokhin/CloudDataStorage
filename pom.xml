@@ -22,16 +22,24 @@
             <artifactId>junit</artifactId>
             <version>RELEASE</version>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+
+        <dependency>
             <groupId>javax.jcr</groupId>
             <artifactId>jcr</artifactId>
             <version>1.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-jcr-rmi</artifactId>
@@ -42,7 +50,7 @@
             <artifactId>jackrabbit-api</artifactId>
             <version>2.17.5</version>
         </dependency>
-        <!--Injections, @ApplicationScoped-->
+
         <dependency>
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se-core</artifactId>
@@ -54,27 +62,24 @@
             <artifactId>weld-se</artifactId>
             <version>2.4.8.Final</version>
         </dependency>
-        <!-- @NotNull, @Nullable -->
+
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>RELEASE</version>
         </dependency>
-        <!-- lombok -->
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.2</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.25</version>
-        </dependency>
     </dependencies>
+
     <build>
         <finalName>CloudDataStorage</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -85,7 +90,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-dependency-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -131,12 +135,6 @@
                         <goals>
                             <goal>copy</goal>
                         </goals>
-                        <!-- <configuration>
-                             <outputDirectory>${project.build.directory}/alternateLocation</outputDirectory>
-                             <overWriteReleases>false</overWriteReleases>
-                             <overWriteSnapshots>false</overWriteSnapshots>
-                             <overWriteIfNewer>true</overWriteIfNewer>
-                         </configuration>-->
                     </execution>
                 </executions>
                 <configuration>
@@ -148,7 +146,7 @@
                             <type>jar</type>
                             <overWrite>true</overWrite>
                             <outputDirectory>${project.build.directory}/cloud/bin</outputDirectory>
-                            <destFileName>Cloud.jar</destFileName>
+                            <destFileName>${build.finalName}.jar</destFileName>
                         </artifactItem>
                     </artifactItems>
                     <overWriteReleases>false</overWriteReleases>

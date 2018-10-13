@@ -13,8 +13,6 @@ import javax.inject.Inject;
 public class KeyboardInitHandler {
     @Inject
     private Event<KeyboardCommandEvent> keyboardCommandEvent;
-    /**
-     * получив {@link KeyboardInitEvent} из {@link BootstrapServiceBean} , выводится приветственное сообщение и {@link KeyboardCommandEvent} срабатывает в {@linkplain KeyboardCommandHandler}**/
 
     public void observe(@Observes final KeyboardInitEvent event){
         System.out.println();
