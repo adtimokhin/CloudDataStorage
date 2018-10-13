@@ -144,13 +144,15 @@ public class FolderLocalServiceBean implements FolderLocalService {
     }
 
     @Override
-    public boolean clearFolderDirectory( @Nullable File root) {
+    public boolean clearFolderDirectory( @Nullable File root) { // todo добавить проверку папки на пустоту, и в случае наличия в нем элементов, опуститься на уровень нуже, провести проверку и в случае удачи, удалить там все элементы, а потом вернуться и удалить все элементы там
+        if(root == null)return false;
         List<String> fileNames = getFolders(root);
         for (String name : fileNames) {
             if(name==  null)return false;
             File file = new File(root,name);
             file.delete();
         }
+        if(fileNames.size() !=0) System.out.println("Все папки не удалось удалить. Причина: в них храняться другие файлы.");
         return true;
     }
 

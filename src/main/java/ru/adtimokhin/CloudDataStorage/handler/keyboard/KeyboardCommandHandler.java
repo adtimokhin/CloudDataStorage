@@ -32,6 +32,7 @@ public class KeyboardCommandHandler {
     private static final String LOGIN = "login";
     private static final String LOGOUT = "logout";
     public static final String ROOT = "root";
+    public static final String STRUCTURE = "structure";
     // для сокращенных комманд:
     private static final String REMOTE_SHRT = "rmt";
     private static final String LOCAL_SHRT = "lcl";
@@ -47,16 +48,19 @@ public class KeyboardCommandHandler {
     private static final String LOGIN_SHRT = "lgi";
     private static final String LOGOUT_SHRT = "lgu";
     public static final String ROOT_SHRT = "rt";
+    public static final String STRUCTURE_SHRT = "str";
     // Общие :
     private static final String PREFIX = "-";
     private static final String ADD = "add";
     private static final String ABBREVIATIONS = "abbr";
-    // команды для тестов и отладки программы
+
+    // команды для тестов и отладки программы // todo убарть эти команды в конце работы над проектом
     private static final String GET_REPO_CMD = "get-rep";
     private static final String GET_SESSION_CMD = "get-ses";
     //команды вызова списка команд и их описания
     private static final String HELP_CMD = HELP;
     private static final String ABBREVIATIONS_CMD = ABBREVIATIONS;
+    private static final String STRUCTURE_CMD = STRUCTURE;
     // команда выхода из приложения
     private static final String EXIT_CMD = EXIT;
     //команды входа/выхода из учетной записи
@@ -86,9 +90,11 @@ public class KeyboardCommandHandler {
     //команды вывода содержимго файлов в консоль //todo: <- реализовать
     private static final String LOCAL_FILE_READ_CMD = LOCAL + PREFIX + FILE + PREFIX + READ;
     private static final String REMOTE_FILE_READ_CMD = REMOTE + PREFIX + FILE + PREFIX + READ;
+
     // сокращенные комманды:
     private static final String HELP_CMD_SRT = HELP_SHRT;
     private static final String EXIT_CMD_SRT = EXIT_SHRT;
+    private static final String STRUCTURE_CMD_SRT = STRUCTURE_SHRT;
     private static final String LOGIN_CMD_SRT = LOGIN_SHRT;
     private static final String LOGOUT_CMD_SRT = LOGOUT_SHRT;
     private static final String LOCAL_FILE_LIST_CMD_SRT = LOCAL_SHRT + PREFIX + FILE_SHRT + PREFIX + LIST_SHRT;
@@ -154,6 +160,12 @@ public class KeyboardCommandHandler {
                 break;
             case ABBREVIATIONS_CMD:
                 printAbbr();
+                break;
+            case STRUCTURE_CMD:
+                printStr();
+                break;
+            case STRUCTURE_CMD_SRT:
+                printStr();
                 break;
             case EXIT_CMD:
                 appService.shutdown();
@@ -347,9 +359,12 @@ public class KeyboardCommandHandler {
         keyboardCommandEvent.fire(new KeyboardCommandEvent());
     }
 
+
+
     private void printHelp() {
         System.out.println(HELP_CMD + " - команда вызова списка команд и их описания");
         System.out.println(ABBREVIATIONS_CMD + "- команда вывода списка стандартных сокращений отдельных частей комманд");
+        System.out.println(STRUCTURE_CMD + "- команда вывода примеров использования комманд и их составления");
         System.out.println(EXIT_CMD + " - команда выхода из приложения");
         System.out.println(LOGIN_CMD + " - команда регистрирования на удаленное хранилище");
         System.out.println(LOGOUT_CMD + " - команда выхода из учетной записи удаленного хранилища");
@@ -374,17 +389,6 @@ public class KeyboardCommandHandler {
     }
 
     private void printAbbr() {
-        // remote -> rmt
-        // local -> lcl
-        // file -> fl
-        // folder -> fd
-        // delete -> dlt
-        //read -> rd
-        // exists -> ext
-        // list - lst
-        // Эти не обязательно
-        // exit -> ex
-        // help -> hlp
         System.out.println(REMOTE + ": " + REMOTE_SHRT);
         System.out.println(LOCAL + ": " + LOCAL_SHRT);
         System.out.println(FILE + ": " + FILE_SHRT);
@@ -395,5 +399,25 @@ public class KeyboardCommandHandler {
         System.out.println(LIST + ": " + LIST_SHRT);
         System.out.println(EXIT + ": " + EXIT_SHRT);
         System.out.println(HELP + ": " + HELP_SHRT);
+        System.out.println(STRUCTURE + ": " + STRUCTURE_SHRT);
+    }
+
+    private void printStr() { // метод особо полезной нагрузки не несет. Может быть удален автором, если понадобиться
+        System.out.println("            +----------------------------------------------------------------------------------------------+");
+        System.out.println("            |     EXAMPLE WITHOUT FILE'S NAME :                                                            | ");
+        System.out.println("+-----------+----------------------------------------------------------------------------------------------+");
+        System.out.println("|Command    "+"|    "+LOCAL+"       |   "+PREFIX+"    |   "+ FILE+"      |    "+PREFIX+"   |    "+LIST+"         | "+"       "+" |     "+ROOT+"        |");
+        System.out.println("+-----------+----------------+--------+-------------+--------+-----------------+---------+-----------------+");
+        System.out.println("|Explanation"+"| "+"working folder"+" | "+"prefix"+" | "+ "file/folder"+" | "+"prefix"+" | "+" actual command"+" | "+" space "+" | "+"directory\'s name"+"|");
+        System.out.println("+-----------+----------------------------------------------------------------------------------------------+");
+        System.out.println();
+        System.out.println("            +----------------------------------------------------------------------------------------------------------------------+");
+        System.out.println("            |     EXAMPLE WITH FILE'S NAME :                                                                                       | ");
+        System.out.println("+-----------+----------------------------------------------------------------------------------------------------------------------+");
+        System.out.println("|Command    "+"|    "+LOCAL+"       |   "+PREFIX+"    |   "+ FILE+"      |    "+PREFIX+"   |    "+LIST+"         | "+"        |"+"   file.txt   |"+"       "+" |     "+ROOT+"        |");
+        System.out.println("+-----------+----------------+--------+-------------+--------+-----------------+---------+--------------+--------+-----------------+");
+        System.out.println("|Explanation"+"| "+"working folder"+" | "+"prefix"+" | "+ "file/folder"+" | "+"prefix"+" | "+" actual command"+" | "+" space  |"+" file\'s name  |"+" space "+" | "+"directory\'s name"+"|");
+        System.out.println("+-----------+----------------------------------------------------------------------------------------------------------------------+");
+
     }
 }

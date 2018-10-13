@@ -11,7 +11,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import static org.apache.jackrabbit.JcrConstants.NT_FOLDER;
 @ApplicationScoped
 public class FileRemoteServiceBean implements FileRemoteService {
     private boolean foundNode = false;
-    private Node file;
+    private Node folder;
     @Inject
     private AppService appService;
 
@@ -206,7 +205,7 @@ public class FileRemoteServiceBean implements FileRemoteService {
                 if (nodeType.isNodeType(NT_FOLDER)) {
                     if (node.getName().equals(folderName)) {
                         foundNode = true;
-                        file = node;
+                        folder = node;
                         return node;
                     }else nodes.add(node);
             }
@@ -216,9 +215,9 @@ public class FileRemoteServiceBean implements FileRemoteService {
                 findFolder(folderName, node);
             }
         }
-        if (root == getRoot() && foundNode) return file;
+        if (root == getRoot() && foundNode) return folder;
         else if (root == getRoot()) return null;
-        return null;
+        return (foundNode)? folder : null;
     }
 
 
